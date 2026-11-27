@@ -14,6 +14,7 @@ import { Graphics } from './graphics.js';
 import { manager } from './assets.js';
 import { loadPeople } from './people.js';
 import { isNight } from './nightlight.js';
+import { Sound } from './audio.js';
 
 // Tela inicial mostra o progresso; o jogo só começa com tudo carregado
 const startText = document.getElementById('start-text');
@@ -41,6 +42,17 @@ const traffic = new Traffic(world.scene);
 const peds = new Pedestrians(world.scene);
 const rig = new CameraRig(world.camera);
 const hud = new Hud();
+const sound = new Sound();
+
+// Gráfico Mínimo: enxerga menos longe (menos coisas para desenhar) e só mostra pedestres por perto
+graphics.onApply = (p) => {
+  world.camera.far = p.lite ? 1000 : 4000;
+  world.camera.updateProjectionMatrix();
+  world.scene.fog.near = p.lite ? 150 : 300;
+  world.scene.fog.far = p.lite ? 900 : 2000;
+  peds.viewDist = p.lite ? 70 : 130;
+};
+graphics.onApply({});
 
 // Farol de verdade no carro do jogador à noite (os outros carros só têm o facho pintado no chão).
 // Fica sempre na cena com intensidade 0 de dia, para não recompilar os materiais ao ligar.
@@ -88,12 +100,16 @@ function toggleVehicle() {
       return;
     }
     car = v.car;
-    if (car.mode === 'ai') {
+    const stolen = car.mode === 'ai';
+    if (stolen) {
       peds.ejectDriver(car);
       hud.toast('Carro roubado!', 1.5);
     }
     car.mode = 'player';
     mode = 'car';
+    // O rádio liga sozinho ao entrar no carro
+    sound.update(0, { mode, car, plane });
+    if (sound.stationName) hud.toast(`${stolen ? 'Carro roubado! · ' : ''}📻 ${sound.stationName}`, 2);
   } else if (mode === 'car') {
     if (Math.abs(car.speed) > 8) return hud.toast('Diminua a velocidade para sair', 1.5);
     car.mode = 'parked';
@@ -111,6 +127,7 @@ function handleCrash() {
     const mine = mode === 'plane' && p === plane;
     if (mine && !crashShown) {
       hud.toast('💥 O avião caiu!', 3);
+      sound.explosion();
       crashShown = true;
     }
     if (p.crashTimer > 0) continue;
@@ -134,11 +151,12 @@ function begin(device) {
   started = true;
   start.style.display = 'none';
   input.device = device;
+  sound.start(); // precisa ser dentro do clique/tecla que começou o jogo
   input.endFrame(); // o OK/Start que começou o jogo não conta como "entrar no carro"
   if (device === 'keyboard') return lockMouse();
   document.body.classList.add('tv');
   if (device === 'tv') {
-    // Processador de TV é fraco: começa no mais leve (G, tecla 2 ou botão verde sobem)
+    // Processador de TV é fraco: começa no Mínimo (G, tecla 2 ou botão verde sobem)
     graphics.apply(0);
     hud.toast('Modo TV · ↑ andar · ← → virar · OK entrar', 3.5);
   } else hud.toast('Controle conectado · Y (△) entra em carros e aviões', 3);
@@ -155,7 +173,7 @@ input.onGamepad((what) => {
 });
 
 // Acesso pelo console do navegador, útil para depurar
-window.game = { world, graphics, player, traffic, peds, planes, animals, rig, tick, get plane() { return plane; }, get mode() { return mode; }, get car() { return car; } };
+window.game = { world, graphics, sound, player, traffic, peds, planes, animals, rig, tick, get plane() { return plane; }, get mode() { return mode; }, get car() { return car; } };
 
 const timer = new THREE.Timer();
 function frame(time) {
@@ -178,6 +196,12 @@ function tick(dt, render = true) {
   if (input.pressed('KeyF')) toggleVehicle();
   if (input.pressed('KeyG')) hud.toast(`Gráficos: ${graphics.cycle()}`, 1.5);
   if (input.pressed('KeyH')) hud.toast(world.toggleSky(), 1.5);
+  if (input.pressed('KeyM')) hud.toast(sound.toggleMute() ? '🔇 Som desligado' : '🔊 Som ligado', 1.5);
+  for (const [code, dir] of [['KeyR', 1], ['RadioPrev', -1]]) {
+    if (!input.pressed(code)) continue;
+    const name = sound.nextStation(dir);
+    if (name) hud.toast(`📻 ${name}`, 2);
+  }
 
   if (mode === 'foot') {
     player.update(dt, input, rig.yaw, city.colliders);
@@ -233,6 +257,7 @@ function tick(dt, render = true) {
   hud.showPrompt(prompt);
   hud.update(dt, { device: input.device, mode, car, plane, planes, focus, heading, cars: traffic.cars });
 
+  sound.update(dt, { mode, car, plane });
   if (render) graphics.render();
   input.endFrame();
 }

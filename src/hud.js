@@ -2,20 +2,20 @@ import { GRID, ROAD, BLOCK, HALF, AIRPORT, APRON, FARM, roadCoord } from './conf
 
 const HELP = {
   keyboard: {
-    foot: '<b>A pé</b><br>WASD andar · Shift correr · Espaço pular<br>Mouse gira a câmera (ou arraste)<br>F entrar em carro ou avião<br>G qualidade dos gráficos · H dia / pôr do sol / noite',
-    car: '<b>Dirigindo</b><br>W acelerar · S frear / ré<br>A / D virar · Espaço freio de mão<br>F sair do carro',
+    foot: '<b>A pé</b><br>WASD andar · Shift correr · Espaço pular<br>Mouse gira a câmera (ou arraste)<br>F entrar em carro ou avião<br>G qualidade dos gráficos · H dia / pôr do sol / noite · M som',
+    car: '<b>Dirigindo</b><br>W acelerar · S frear / ré<br>A / D virar · Espaço freio de mão<br>R troca a rádio · F sair do carro',
     plane:
       '<b>Pilotando</b><br>W / S mais / menos motor<br>↑ / ↓ levantar / baixar o nariz<br>← / → inclinar (faz a curva)<br>A / D leme · Espaço freio no chão<br>Acelere e puxe ↑ para decolar: caça e jato ~200 km/h, comercial ~220, 747 ~250<br>F sair (parado no chão)',
   },
   gamepad: {
     foot: '<b>A pé</b><br>Stick esquerdo andar · B (○) correr · A (✕) pular<br>Stick direito gira a câmera<br>Y (△) entrar em carro ou avião<br>Cruz ↓ qualidade · Select ou Cruz ↑ dia / noite',
-    car: '<b>Dirigindo</b><br>RT (R2) acelerar · LT (L2) frear / ré<br>Stick esquerdo virar · B (○) freio de mão<br>Stick direito olha em volta<br>Y (△) sair do carro',
+    car: '<b>Dirigindo</b><br>RT (R2) acelerar · LT (L2) frear / ré<br>Stick esquerdo virar · B (○) freio de mão<br>Stick direito olha em volta<br>Cruz ← → troca a rádio · Y (△) sair do carro',
     plane:
       '<b>Pilotando</b><br>RT / LT (R2 / L2) mais / menos motor<br>Stick esquerdo: ↑ ↓ nariz · ← → inclinar<br>LB / RB (L1 / R1) leme · A (✕) freio no chão<br>Acelere e puxe o stick para cima para decolar<br>Y (△) sair (parado no chão)',
   },
   tv: {
-    foot: '<b>A pé</b><br>↑ andar / correr · ↓ devagar / parar<br>← → virar<br>OK entrar em carro ou avião<br>1 / vermelho dia / noite · 2 / verde gráficos',
-    car: '<b>Dirigindo</b> (piloto automático)<br>↑ acelerar · ↓ frear / ré<br>← → virar<br>OK sair do carro (devagar)',
+    foot: '<b>A pé</b><br>↑ andar / correr · ↓ devagar / parar<br>← → virar<br>OK entrar em carro ou avião<br>1 / vermelho dia / noite · 2 / verde gráficos<br>4 / azul liga / desliga o som',
+    car: '<b>Dirigindo</b> (piloto automático)<br>↑ acelerar · ↓ frear / ré<br>← → virar · 3 / amarelo troca a rádio<br>OK sair do carro (devagar)',
     plane:
       '<b>Pilotando</b><br>No chão: segure ↑ para acelerar e decolar · ↓ frear · ← → guiar<br>No ar: ↑ ↓ nariz · ← → curva (motor no máximo)<br>Para pousar, segure ↓ até tocar o chão e parar<br>OK sair (parado no chão)',
   },

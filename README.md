@@ -20,13 +20,15 @@ Não precisa instalar nada. Funciona melhor no Chrome ou no Edge, em computador.
 | W / S (avião) | Mais / menos motor |
 | ↑ ↓ (avião) | Levantar / baixar o nariz |
 | ← → (avião) | Inclinar e fazer curva |
-| G | Qualidade dos gráficos (aperte se ficar lento) |
+| G | Qualidade dos gráficos: Mínimo, Baixo, Médio, Alto, Ultra (aperte se ficar lento) |
 | H | Dia / pôr do sol / noite |
+| R | Trocar a estação do rádio (no carro) |
+| M | Liga / desliga o som |
 
 ### Na TV (controle remoto)
 
 Abra o jogo no navegador da TV (Android TV / Google TV / Fire TV com Chrome funcionam melhor) e
-aperte **OK** na tela inicial: o jogo entra no **modo TV**, com letras maiores e gráficos leves.
+aperte **OK** na tela inicial: o jogo entra no **modo TV**, com letras maiores e o gráfico **Mínimo** (sem sombras, vendo menos longe).
 O controle remoto só tem setas e OK, então o jogo ajuda:
 
 | Botão | A pé | Carro | Avião |
@@ -37,6 +39,8 @@ O controle remoto só tem setas e OK, então o jogo ajuda:
 | OK | entrar | sair (devagar) | sair (parado no chão) |
 | 1 ou vermelho | dia / noite | | |
 | 2 ou verde | qualidade dos gráficos | | |
+| 3, amarelo ou canal ▲▼ | | trocar a rádio | |
+| 4 ou azul | liga / desliga o som | | |
 
 No carro o piloto automático mantém a velocidade. No avião o motor fica no máximo e o jogo não
 deixa o nariz subir ou descer demais; perto do chão ele segura a descida para o pouso não virar acidente.
@@ -57,6 +61,15 @@ Qualquer controle que o navegador reconheça (Xbox, PlayStation, 8BitDo…). Ape
 | Y (△) | entrar | sair | sair (parado no chão) |
 | Select ou cruz ↑ | dia / noite | | |
 | Cruz ↓ | qualidade dos gráficos | | |
+| Cruz ← → | | trocar a rádio | |
+| Clique do stick direito | liga / desliga o som | | |
+
+### Som e rádio
+
+Todo o som é sintetizado na hora pelo navegador (nenhum arquivo de áudio para baixar): motor do
+carro com troca de marcha, turbina do avião e explosão. Ao entrar num carro o **rádio** liga sozinho
+em uma de três estações — **Batida FM 98.1** (house), **Lo-fi 87.5** e **Retrô 101.7** (synthwave) —
+com músicas geradas na hora: tom, acordes e melodia mudam a cada música, com vinheta entre elas.
 
 O aeroporto fica a leste da cidade (✈ no minimapa) e a fazenda ao lado dele.
 

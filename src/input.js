@@ -29,15 +29,21 @@ const KEY_ALIASES = {
   Accept: 'Enter',
   ColorF0Red: 'KeyH',
   ColorF1Green: 'KeyG',
+  ColorF2Yellow: 'KeyR',
+  ColorF3Blue: 'KeyM',
+  ChannelUp: 'KeyR',
+  ChannelDown: 'RadioPrev',
   MediaPlayPause: 'Enter',
 };
-const KEYCODE_ALIASES = { 13: 'Enter', 23: 'Enter', 37: 'ArrowLeft', 38: 'ArrowUp', 39: 'ArrowRight', 40: 'ArrowDown', 403: 'KeyH', 404: 'KeyG' };
+const KEYCODE_ALIASES = { 13: 'Enter', 23: 'Enter', 37: 'ArrowLeft', 38: 'ArrowUp', 39: 'ArrowRight', 40: 'ArrowDown', 403: 'KeyH', 404: 'KeyG', 405: 'KeyR', 406: 'KeyM', 427: 'KeyR', 428: 'RadioPrev' };
+// Teclas de mídia trocam a estação do rádio ('RadioPrev' é uma tecla virtual)
+const CODE_ALIASES = { NumpadEnter: 'Enter', MediaTrackNext: 'KeyR', MediaTrackPrevious: 'RadioPrev' };
 // No controle remoto da TV, as teclas 1 e 2 também servem para dia/noite e qualidade
-const TV_DIGITS = { Digit1: 'KeyH', Numpad1: 'KeyH', Digit2: 'KeyG', Numpad2: 'KeyG' };
+const TV_DIGITS = { Digit1: 'KeyH', Numpad1: 'KeyH', Digit2: 'KeyG', Numpad2: 'KeyG', Digit3: 'KeyR', Numpad3: 'KeyR', Digit4: 'KeyM', Numpad4: 'KeyM' };
 
 function codeOf(e) {
   let code = e.code || KEY_ALIASES[e.key] || KEYCODE_ALIASES[e.keyCode] || '';
-  if (code === 'NumpadEnter') code = 'Enter';
+  code = CODE_ALIASES[code] ?? code;
   if (state.device === 'tv' && TV_DIGITS[code]) code = TV_DIGITS[code];
   return code;
 }
@@ -132,6 +138,9 @@ function readGamepad(dt, ctx) {
   if (tapped(BTN.Y)) pressed.add('KeyF');
   if (tapped(BTN.SELECT) || tapped(BTN.UP)) pressed.add('KeyH');
   if (tapped(BTN.DOWN)) pressed.add('KeyG');
+  if (tapped(BTN.RIGHT)) pressed.add('KeyR'); // rádio
+  if (tapped(BTN.LEFT)) pressed.add('RadioPrev');
+  if (tapped(BTN.RS)) pressed.add('KeyM'); // som
 
   if (ctx.mode === 'foot') {
     setVirt('KeyW', Math.max(0, -ly));
