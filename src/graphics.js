@@ -6,7 +6,9 @@ import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 // Do mais leve ao mais bonito. "post" liga o pós-processamento (brilho, sombra de contato).
+// "Mínimo" é para TV e máquinas fracas: sem sombra, sem relevo nas texturas e vendo menos longe.
 export const PRESETS = [
+  { name: 'Mínimo', ratio: () => 0.6, shadow: 0, post: false, lite: true },
   { name: 'Baixo', ratio: () => 0.75, shadow: 1024, post: false },
   { name: 'Médio', ratio: (dpr) => Math.min(dpr, 1), shadow: 2048, post: false },
   { name: 'Alto', ratio: (dpr) => Math.min(dpr, 1.25), shadow: 2048, post: true, bloom: true, msaa: 4 },
@@ -23,7 +25,8 @@ export class Graphics {
     document.body.prepend(r.domElement);
     this.renderer = r;
     this.composer = null;
-    this.level = 2;
+    this.level = 2; // Médio: o Alto e o Ultra ficam para quem tem placa de vídeo boa
+    this.onApply = null; // main.js ajusta distância de visão e pedestres no modo Mínimo
     this.auto = true; // desce a qualidade sozinho se o FPS ficar baixo
     this.fps = 60;
     this.frames = 0;
@@ -47,11 +50,14 @@ export class Graphics {
     r.setPixelRatio(p.ratio(devicePixelRatio));
     r.setSize(innerWidth, innerHeight);
 
-    this.sun.shadow.mapSize.set(p.shadow, p.shadow);
+    this.sun.castShadow = p.shadow > 0;
+    if (p.shadow) this.sun.shadow.mapSize.set(p.shadow, p.shadow);
     if (this.sun.shadow.map) {
       this.sun.shadow.map.dispose();
       this.sun.shadow.map = null;
     }
+    this.setNormalMaps(!p.lite);
+    this.onApply?.(p);
 
     this.composer?.dispose();
     this.composer = null;
@@ -70,6 +76,28 @@ export class Graphics {
       this.composer = c;
     }
     return p.name;
+  }
+
+  // Relevo das texturas (normal map) custa caro em GPU fraca; guarda o original para poder voltar
+  setNormalMaps(on) {
+    if (this.normalMapsOn === on) return;
+    this.normalMapsOn = on;
+    const seen = new Set();
+    this.scene.traverse((o) => {
+      for (const m of [o.material].flat()) {
+        if (!m || seen.has(m)) continue;
+        seen.add(m);
+        if (!on && m.normalMap) {
+          m.userData.normalMap = m.normalMap;
+          m.normalMap = null;
+          m.needsUpdate = true;
+        } else if (on && m.userData.normalMap) {
+          m.normalMap = m.userData.normalMap;
+          m.userData.normalMap = null;
+          m.needsUpdate = true;
+        }
+      }
+    });
   }
 
   // Tecla G: próxima qualidade (e o jogador passa a mandar, sem ajuste automático)

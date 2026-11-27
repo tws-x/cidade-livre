@@ -9,9 +9,9 @@ export const SUN_DIR = new THREE.Vector3().setFromSphericalCoords(1, THREE.MathU
 
 // Céus fotográficos 360° (Poly Haven, CC0). Toda a luz e os reflexos do jogo vêm deles.
 const SKIES = {
-  day: { file: 'assets/hdri/day_4k.hdr', name: 'Dia', sun: 3.2, exposure: 0.9, brightness: 0.47 },
+  day: { file: 'assets/hdri/day_2k.hdr', name: 'Dia', sun: 3.2, exposure: 0.9, brightness: 0.47 },
   sunset: { file: 'assets/hdri/sunset_2k.hdr', name: 'Pôr do sol', sun: 2.6, exposure: 1, brightness: 0.47 },
-  night: { file: 'assets/hdri/night_4k.hdr', name: 'Noite', sun: 0.5, exposure: 1.1, brightness: 0.04, night: true },
+  night: { file: 'assets/hdri/night_2k.hdr', name: 'Noite', sun: 0.5, exposure: 1.1, brightness: 0.04, night: true },
 };
 const ORDER = ['day', 'sunset', 'night'];
 
@@ -103,8 +103,13 @@ export function createWorld(renderer) {
   // Chão de grama fotográfica (15 m por repetição) com manchas para não parecer azulejo
   const grassMat = addMacroVariation(polyHavenMaterial('aerial_grass_rock'), 0.08);
   for (const t of [grassMat.map, grassMat.normalMap, grassMat.aoMap]) t.repeat.set(400, 400);
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000), grassMat);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000, 60, 60), grassMat);
   ground.rotation.x = -Math.PI / 2;
+  // Gramado em quadrados de 100 m e empurrado para trás no teste de profundidade: com só 2 triângulos
+  // de 6 km a profundidade sai imprecisa em GPU fraca/resolução reduzida e as ruas (2 cm acima) sumiam
+  grassMat.polygonOffset = true;
+  grassMat.polygonOffsetFactor = 4;
+  grassMat.polygonOffsetUnits = 16;
   ground.receiveShadow = true;
   scene.add(ground);
 

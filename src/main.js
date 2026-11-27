@@ -42,6 +42,16 @@ const peds = new Pedestrians(world.scene);
 const rig = new CameraRig(world.camera);
 const hud = new Hud();
 
+// Gráfico Mínimo: enxerga menos longe (menos coisas para desenhar) e só mostra pedestres por perto
+graphics.onApply = (p) => {
+  world.camera.far = p.lite ? 1000 : 4000;
+  world.camera.updateProjectionMatrix();
+  world.scene.fog.near = p.lite ? 150 : 300;
+  world.scene.fog.far = p.lite ? 900 : 2000;
+  peds.viewDist = p.lite ? 70 : 130;
+};
+graphics.onApply({});
+
 // Farol de verdade no carro do jogador à noite (os outros carros só têm o facho pintado no chão).
 // Fica sempre na cena com intensidade 0 de dia, para não recompilar os materiais ao ligar.
 const headlight = new THREE.SpotLight('#fff2d9', 0, 80, 0.5, 0.55, 1.2);
@@ -138,7 +148,7 @@ function begin(device) {
   if (device === 'keyboard') return lockMouse();
   document.body.classList.add('tv');
   if (device === 'tv') {
-    // Processador de TV é fraco: começa no mais leve (G, tecla 2 ou botão verde sobem)
+    // Processador de TV é fraco: começa no Mínimo (G, tecla 2 ou botão verde sobem)
     graphics.apply(0);
     hud.toast('Modo TV · ↑ andar · ← → virar · OK entrar', 3.5);
   } else hud.toast('Controle conectado · Y (△) entra em carros e aviões', 3);

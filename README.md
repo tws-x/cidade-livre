@@ -20,13 +20,13 @@ Não precisa instalar nada. Funciona melhor no Chrome ou no Edge, em computador.
 | W / S (avião) | Mais / menos motor |
 | ↑ ↓ (avião) | Levantar / baixar o nariz |
 | ← → (avião) | Inclinar e fazer curva |
-| G | Qualidade dos gráficos (aperte se ficar lento) |
+| G | Qualidade dos gráficos: Mínimo, Baixo, Médio, Alto, Ultra (aperte se ficar lento) |
 | H | Dia / pôr do sol / noite |
 
 ### Na TV (controle remoto)
 
 Abra o jogo no navegador da TV (Android TV / Google TV / Fire TV com Chrome funcionam melhor) e
-aperte **OK** na tela inicial: o jogo entra no **modo TV**, com letras maiores e gráficos leves.
+aperte **OK** na tela inicial: o jogo entra no **modo TV**, com letras maiores e o gráfico **Mínimo** (sem sombras, vendo menos longe).
 O controle remoto só tem setas e OK, então o jogo ajuda:
 
 | Botão | A pé | Carro | Avião |

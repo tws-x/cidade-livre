@@ -134,12 +134,13 @@ class Ped {
 export class Pedestrians {
   constructor(scene, count = 70) {
     this.peds = Array.from({ length: count }, () => new Ped(scene));
+    this.viewDist = 130; // menor no gráfico Mínimo
   }
 
   // focus: onde o jogador está; pedestres longe nem são desenhados
   update(dt, playerCar, focus) {
     for (const p of this.peds) {
-      p.mesh.visible = Math.abs(p.pos.x - focus.x) < 130 && Math.abs(p.pos.z - focus.z) < 130;
+      p.mesh.visible = Math.abs(p.pos.x - focus.x) < this.viewDist && Math.abs(p.pos.z - focus.z) < this.viewDist;
       if (playerCar && p.state !== 'down' && Math.abs(playerCar.speed) > 3) {
         const d = Math.hypot(p.pos.x - playerCar.pos.x, p.pos.z - playerCar.pos.z);
         const fx = Math.sin(playerCar.heading);
