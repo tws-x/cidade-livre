@@ -22,6 +22,14 @@
         background: #000b; color: #fff; text-align: center; cursor: pointer; }
       #start h1 { margin: 0 0 8px; font-size: 60px; letter-spacing: 3px; color: #ffd54a; text-shadow: 0 4px 0 #b8860b; }
       #start p { margin: 6px; font-size: 18px; }
+      /* Modo TV / controle: letra maior para ler do sofá e sem cursor */
+      body.tv { cursor: none; }
+      body.tv #hud { font-size: 20px; max-width: 520px; top: 24px; left: 24px; }
+      body.tv #stats { font-size: 34px; right: 32px; bottom: 28px; }
+      body.tv #stats small { font-size: 20px; }
+      body.tv #prompt { font-size: 24px; bottom: 90px; }
+      body.tv #toast { font-size: 40px; }
+      body.tv #minimap { left: 28px; bottom: 28px; }
     </style>
   </head>
   <body>
@@ -35,6 +43,7 @@
       <p id="start-text">Carregando gráficos…</p>
       <p style="opacity: .7">WASD andar · Mouse câmera · F entrar/sair de carros e do avião</p>
       <p style="opacity: .7">Aeroporto a leste (✈ no minimapa) com Boeing 747, avião comercial, jato executivo e caça · Fazenda ao lado</p>
+      <p style="opacity: .7">📺 Na TV: setas e OK do controle remoto · 🎮 Controle Bluetooth de Xbox ou PlayStation também funciona</p>
       <p style="opacity: .7">G muda a qualidade dos gráficos (Baixo, Médio, Alto, Ultra) · H alterna dia, pôr do sol e noite</p>
       <p style="opacity: .45; font-size: 12px; margin-top: 18px">Modelos: Quaternius (CC0) · Aviões por Poly by Google, Miha Lunar e jeremy (CC-BY 3.0) · Texturas e céus: Poly Haven e ambientCG (CC0)</p>
     </div>

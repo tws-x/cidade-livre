@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { createWorld } from './world.js';
 import { buildCity } from './city.js';
-import { input } from './input.js';
+import { input, pollStart } from './input.js';
 import { Player } from './player.js';
 import { CameraRig } from './camera.js';
 import { Traffic } from './traffic.js';
@@ -23,7 +23,7 @@ manager.onProgress = (url, loaded, total) => {
 };
 manager.onLoad = () => {
   ready = true;
-  startText.textContent = 'Clique para jogar';
+  startText.textContent = 'Clique para jogar · OK no controle remoto da TV · Start no controle';
 };
 
 const graphics = new Graphics();
@@ -81,7 +81,10 @@ function toggleVehicle() {
     if (v.type === 'plane') {
       plane = v.plane;
       mode = 'plane';
-      hud.toast('Segure W para acelerar', 2);
+      hud.toast(
+        { keyboard: 'Segure W para acelerar', gamepad: 'Segure RT (R2) para acelerar', tv: 'Segure ↑ para acelerar e decolar' }[input.device],
+        2.5,
+      );
       return;
     }
     car = v.car;
@@ -123,12 +126,33 @@ function handleCrash() {
 const canvasEl = graphics.renderer.domElement;
 const lockMouse = () => Promise.resolve(canvasEl.requestPointerLock?.()).catch(() => {});
 const start = document.getElementById('start');
-start.addEventListener('click', () => {
-  if (!ready) return;
+let started = false;
+
+// device: 'keyboard' (clique), 'tv' (OK do controle remoto) ou 'gamepad' (Start/A no controle)
+function begin(device) {
+  if (!ready || started) return;
+  started = true;
   start.style.display = 'none';
-  lockMouse();
+  input.device = device;
+  input.endFrame(); // o OK/Start que começou o jogo não conta como "entrar no carro"
+  if (device === 'keyboard') return lockMouse();
+  document.body.classList.add('tv');
+  if (device === 'tv') {
+    // Processador de TV é fraco: começa no mais leve (G, tecla 2 ou botão verde sobem)
+    graphics.apply(0);
+    hud.toast('Modo TV · ↑ andar · ← → virar · OK entrar', 3.5);
+  } else hud.toast('Controle conectado · Y (△) entra em carros e aviões', 3);
+}
+start.addEventListener('click', () => begin('keyboard'));
+addEventListener('keydown', (e) => {
+  if (started) return;
+  if (e.key === 'Enter' || e.code === 'Enter' || e.code === 'NumpadEnter' || e.keyCode === 13 || e.keyCode === 23) begin('tv');
 });
-canvasEl.addEventListener('click', lockMouse);
+canvasEl.addEventListener('click', () => input.device === 'keyboard' && lockMouse());
+input.onGamepad((what) => {
+  if (!started) return;
+  hud.toast(what === 'connected' ? '🎮 Controle conectado' : 'Controle desconectado', 2);
+});
 
 // Acesso pelo console do navegador, útil para depurar
 window.game = { world, graphics, player, traffic, peds, planes, animals, rig, tick, get plane() { return plane; }, get mode() { return mode; }, get car() { return car; } };
@@ -136,6 +160,7 @@ window.game = { world, graphics, player, traffic, peds, planes, animals, rig, ti
 const timer = new THREE.Timer();
 function frame(time) {
   requestAnimationFrame(frame);
+  if (!started && ready && pollStart()) begin('gamepad');
   if (window.game.frozen) return; // pausa para inspecionar pelo console
   timer.update(time);
   const realDt = timer.getDelta();
@@ -145,8 +170,11 @@ function frame(time) {
 }
 
 function tick(dt, render = true) {
+  input.update(dt, { mode, plane: mode === 'plane' ? plane : null });
   const mouse = input.consumeMouse();
   if (mode !== 'plane') rig.rotate(mouse.x, mouse.y);
+  // Controle remoto da TV: ← → giram a câmera (e o boneco anda para onde ela olha)
+  if (mode === 'foot' && input.turn) rig.rotate(-input.turn * 800 * dt, 0);
   if (input.pressed('KeyF')) toggleVehicle();
   if (input.pressed('KeyG')) hud.toast(`Gráficos: ${graphics.cycle()}`, 1.5);
   if (input.pressed('KeyH')) hud.toast(world.toggleSky(), 1.5);
@@ -199,10 +227,11 @@ function tick(dt, render = true) {
   let prompt = null;
   if (mode === 'foot') {
     const v = nearestVehicle();
-    if (v) prompt = v.type === 'plane' ? `F — pilotar o ${v.plane.cfg.name}` : v.car.mode === 'ai' ? 'F — roubar o carro' : 'F — entrar no carro';
+    const key = { keyboard: 'F', gamepad: 'Y (△)', tv: 'OK' }[input.device];
+    if (v) prompt = v.type === 'plane' ? `${key} — pilotar o ${v.plane.cfg.name}` : v.car.mode === 'ai' ? `${key} — roubar o carro` : `${key} — entrar no carro`;
   }
   hud.showPrompt(prompt);
-  hud.update(dt, { mode, car, plane, planes, focus, heading, cars: traffic.cars });
+  hud.update(dt, { device: input.device, mode, car, plane, planes, focus, heading, cars: traffic.cars });
 
   if (render) graphics.render();
   input.endFrame();

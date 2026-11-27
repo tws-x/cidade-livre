@@ -138,7 +138,8 @@ export class Car {
     const steer = input.axis('KeyD', 'KeyA');
     if (t > 0) this.speed += (this.speed < 0 ? 22 : 11) * dt;
     else if (t < 0) this.speed -= (this.speed > 0 ? 22 : 7) * dt;
-    else this.speed = approach(this.speed, 0, 3 * dt);
+    // Piloto automático (controle remoto da TV): sem acelerar nem frear, mantém a velocidade
+    else if (!input.cruise) this.speed = approach(this.speed, 0, 3 * dt);
     if (input.down('Space')) this.speed = approach(this.speed, 0, 28 * dt);
     this.speed = clamp(this.speed, -10, 45);
     // Volante perde força em alta velocidade e não gira o carro parado
