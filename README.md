@@ -4,7 +4,7 @@ Jogo 3D estilo GTA que roda direto no navegador: cidade com trânsito e pedestre
 4 aviões para pilotar (comercial, Boeing 747, jato executivo e caça), fazenda com animais,
 dia, pôr do sol e noite.
 
-## ▶ [Clique aqui para jogar](https://tdevvv.github.io/cidade-livre/)
+## ▶ [Clique aqui para jogar](https://tws-x.github.io/cidade-livre/)
 
 Não precisa instalar nada. Funciona melhor no Chrome ou no Edge, em computador.
 

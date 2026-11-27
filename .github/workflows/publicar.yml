@@ -1,5 +1,5 @@
 ﻿# Publica o jogo no GitHub Pages a cada envio para a branch main.
-# Depois disso, qualquer pessoa joga pelo link https://tdevvv.github.io/cidade-livre/
+# Depois disso, qualquer pessoa joga pelo link https://tws-x.github.io/cidade-livre/
 name: Publicar jogo
 
 on:
